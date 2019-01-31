@@ -1,0 +1,103 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+using namespace std;
+
+void Start();
+void GetResults();
+
+int i, j, life, maxrand;
+char c,a[100];
+
+int main() {
+	cout << "Choose color :\n";
+	cin.getline(a,100);
+	system(a);
+	cout << "----------------------------------------------------------------------------\n";
+	cout << "\t\t\t** Jackpot game **\n";
+	cout << "\tThe goal of this game is to guess a number.Jackpot will tell you if\n";
+	cout << "the number is too big or too small compared to the secret number to find it.\n\n\n";
+	Start();
+	return 0;
+}
+
+void Start() {
+	i = 0;
+	j = 0;
+	life = 0;
+	maxrand = 6;
+	
+	cout << "Select difficulty mode:\n"; // the user has to select a difficutly level
+	cout << "1 : Supper easy (0-7)\n";
+	cout << "2 : Easy (0-15)\n";
+	cout << "3 : Medium (0-30)\n";
+	cout << "4 : hard (0-60)\n";
+	cout << "5 : Difficult (0-120)\n";
+	cout << "6 : Supper difficult (0-240)\n";
+	cout << "or type another key to quit\n";
+
+	cin >> c;                   // read the user's choice
+	cout << "\n";
+
+	switch (c) {
+		case '1':
+			maxrand = 7;  // the random number will be between 0 and maxrand
+			break;
+		case '2':
+			maxrand = 15;
+			break;
+		case '3':
+			maxrand = 30;
+			break;
+		case '4':
+			maxrand = 60;
+			break;
+		case '5':
+			maxrand = 120;
+			break;
+		case '6':
+			maxrand = 240;
+			break;
+		default:
+			cout<<"Bye ! Hope to see you again !";
+			exit(0);
+		break;
+	}
+
+	life = 5;         // number of lifes of the player
+	srand((unsigned)time(NULL)); // init Rand() function
+	j = rand() % maxrand;  // j get a random value between 0 and maxrand
+	
+	GetResults();
+}
+
+void GetResults() {
+	if (life <= 0) { // if player has no more life then he loses
+		cout << "You lose ! The secret number is "<<j<<"\n\n";
+		Start();
+	}
+
+	cout << "Type a number: \n";
+	cin >> i;
+	
+	if((i>maxrand) || (i<0)) { // if the user number isn't correct, restart
+		cout << "Error: number not between 0 and \n" << maxrand;
+		GetResults();
+	}
+
+	if(i == j) {
+		cout << "YOU WIN !\n\n"; // the user found the secret number
+		Start();
+	} else if(i>j) {
+		cout << "Too BIG\n";
+		life = life - 1;
+		cout << "Lives remaining: " << life << "\n\n";
+		GetResults();
+	} else if(i<j) {
+		cout << "Too SMALL\n";
+		life = life - 1;
+		cout << "Lives remaining: " << life << "\n\n";
+		GetResults();
+	}
+}
