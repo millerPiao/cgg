@@ -1,0 +1,193 @@
+#include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<conio.h>
+#include<windows.h>
+using namespace std;
+
+typedef struct {
+	int x, y;
+} Point;
+
+char map[22][22];                        
+Point snake[400], food, Next;        
+int head, tail;                            
+int grade, length, autotime;           
+char direction;                          
+char a[100];
+
+void gotoxy(int x, int y) {
+	HANDLE hConsoleOutput;
+	COORD dwCursorPosition;
+	dwCursorPosition.X = x;
+	dwCursorPosition.Y = y;
+	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsoleOutput, dwCursorPosition);
+}
+
+
+inline void Update(char map[][22], int grade, int length, int autotime) {
+	gotoxy(0, 0);
+	int i, j;
+	printf("\n");
+	for (i = 0; i < 22; i++) {
+		printf("\t");
+		for (j = 0; j < 22; j++)
+			printf("%c ", map[i][j]);
+		if (i == 0)
+			printf("\t等级为：%d", grade);
+		if (i == 2)
+			printf("\t长度为：%d", length);
+		if (i == 6)
+			printf("\t自动前进时间");
+		if (i == 8)
+			printf("\t间隔为：%d ms", autotime);
+		printf("\n");
+	}
+}
+
+inline void hello() {
+	puts("\n\n\n\t\t\t贪吃蛇游戏即将开始！");                        
+	double start;
+	for (int i = 3; i >= 0; i--) {
+		start = (double)clock() / CLOCKS_PER_SEC;             
+		while ((double)clock() / CLOCKS_PER_SEC - start <= 1);   
+		if (i > 0) {
+			system("cls");                                        
+			printf("\n\n\n\t\t\t进入倒计时：%d\n", i);                
+		} else
+			Update(map, grade, length, autotime);                
+	}
+}
+
+inline void f() {
+	srand(int(time(0)));                                      
+	do {
+		food.x = rand() % 20 + 1;
+		food.y = rand() % 20 + 1;
+	} while (map[food.x][food.y] != ' ');
+	map[food.x][food.y] = '!';                               
+}
+inline void init() {
+	int i, j;
+	for (i = 1; i <= 20; i++)
+		for (j = 1; j <= 20; j++)
+			map[i][j] = ' ';
+	for (i = 0; i <= 21; i++)
+		map[0][i] = map[21][i] = map[i][0] = map[i][21] = '*';    
+	map[1][1] = map[1][2] = 'O';                               
+	map[1][3] = '@';                                        
+	head = 2;
+	tail = 0;                                        
+	snake[head].x = 1;
+	snake[head].y = 3;                  
+	snake[tail].x = 1;
+	snake[tail].y = 1;                     
+	snake[1].x = 1;
+	snake[1].y = 2;                            
+	f();                                             
+	grade = 1;
+	length = 3;
+	autotime = 500;                    
+	direction = 77;                                         
+}
+
+//预前进
+inline int GO() {
+	bool timeover = true;
+	double start = (double)clock() / CLOCKS_PER_SEC;      
+
+L:
+	while ((timeover = ((double)clock() / CLOCKS_PER_SEC - start <= autotime / 1000.0)) && !_kbhit());
+	if (timeover) {
+		//_getch();
+		char d = _getch();                               
+		if (d != 72 && d != 80 && d != 75 && d != 77 || direction == 72 && d == 80 || direction == 80 && d == 72 || direction == 75 && d == 77 || direction == 77 && d == 75)
+			goto L;
+		else
+			direction = d;
+	}
+	switch (direction) {
+		case 72:
+			Next.x = snake[head].x - 1;
+			Next.y = snake[head].y;        
+			break;
+		case 80:
+			Next.x = snake[head].x + 1;
+			Next.y = snake[head].y;        
+			break;
+		case 75:
+			Next.x = snake[head].x;
+			Next.y = snake[head].y - 1;       
+			break;
+		case 77:
+			Next.x = snake[head].x;
+			Next.y = snake[head].y + 1;      
+			break;
+		default:
+			puts("\tGame over!");                                
+			return 0;
+	}
+	if (Next.x == 0 || Next.x == 21 || Next.y == 0 || Next.y == 21) {     
+		puts("\tGame over!");
+		return 0;
+	}
+	if (map[Next.x][Next.y] != ' '&&!(Next.x == food.x&&Next.y == food.y)) { 
+		puts("\tGame over!");
+		return 0;
+	}
+	if (length == 400) {                                                 
+		puts("\tGood game!");
+		return 0;
+	}
+	return 1;
+}
+
+//吃到食物
+inline void EAT() {
+	length++;                                 
+	int _grade = length / 10 + 1;               
+	if (_grade != grade) {
+		grade = _grade;
+		if (autotime >= 100)
+			autotime = 550 - grade * 50;            
+	}
+	map[Next.x][Next.y] = '@';                   
+	map[snake[head].x][snake[head].y] = 'O';       
+	head = (head + 1) % 400;                  
+	snake[head].x = Next.x;
+	snake[head].y = Next.y;    
+	f();                                        
+	Update(map, grade, length, autotime);      
+}
+
+//没吃到食物
+inline void FAILURE() {
+	map[snake[tail].x][snake[tail].y] = ' ';       
+	tail = (tail + 1) % 400;                    
+	map[Next.x][Next.y] = '@';                    
+	map[snake[head].x][snake[head].y] = 'O';       
+	head = (head + 1) % 400;                    
+	snake[head].x = Next.x;                        
+	snake[head].y = Next.y;
+	Update(map, grade, length, autotime);          
+}
+
+int main() {
+	cout << "请选择颜色 :\n";
+	cin.getline(a,100);
+	system(a);
+	init();                
+	hello();          
+	while (1) {
+		if (GO()) {    
+			if (Next.x == food.x&&Next.y == food.y)
+				EAT(); 
+			else
+				FAILURE(); 
+		} else
+			return 0;       
+	}
+	return 0;
+}
