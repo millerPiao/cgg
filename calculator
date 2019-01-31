@@ -1,0 +1,138 @@
+#include <iostream>
+#include <stdlib.h>
+#include <cmath>
+using namespace std;
+char com,op,functionSSS,color[100];
+long double a,b,c;
+void hello();
+void checkInput();
+void help();
+void caculate();
+void special();
+int main() {
+	system("color f0");
+	cout << "\t\t\t    -:: CACULATOR ::-\n\n";
+	cout << "Choose color :";
+	cin.getline(color,100);
+	system(color);
+	system("cls");
+	cout << "\t\t\t    -:: CACULATOR ::-\n\n";
+	hello();
+	system("pause");
+	return 0;
+}
+void hello() {
+	cout << "Press H for help\n";
+	cout << "Press Q to quit\n";
+	cout << "Press C to caculate two numbers\n";
+	cout << "Press S for special functions\n";
+	checkInput();
+}
+void checkInput() {
+	cin>>com;
+	switch(com) {
+		case 'H':
+		case 'h':
+			help();
+			break;
+		case 'Q':
+		case 'q':
+			cout << "\n\nCaculate finished .";
+			exit(0);
+			break;
+		case 'C':
+		case 'c':
+			caculate();
+			break;
+		case 'S':
+		case 's':
+			special();
+			break;
+		default:
+			cout << "Illegal command !\n";
+			cout << "Please try again :\n";
+			checkInput();
+			break;
+	}
+}
+void help() {
+	cout << "\n\nTo caculate two numbers ( -3.4E+4932 ~ 1.1E+4932 ) ,\n";
+	cout << "your input must be this :\n";
+	cout << "number1 operator number2\n";
+	cout << "the operator can be + , - , * , / .\n";
+	cout << "To exit the functions , Input number1 Q number2.\n\n";
+	cout << "To use the special functions ( abs , sqrt , sqaure , cube ) in this caculator ,\n";
+	cout << "your input must be this :\n";
+	cout << "functionSSS number\n";
+	cout << "function|functionSSS\n";
+	cout << "--------+-----------\n";
+	cout << "abs     |s          \n";
+	cout << "--------+-----------\n";
+	cout << "sqrt    |t          \n";
+	cout << "--------+-----------\n";
+	cout << "sqaure  |u          \n";
+	cout << "--------+-----------\n";
+	cout << "cube    |e          \n\n";
+	cout << "To exit the functions , Input functionSSS Q.\n\n";
+	hello();
+}
+void caculate() {
+	cin >> a >> op >> b;
+	while(op != 'Q' && op != 'q') {
+		cout << "\n\n";
+		switch(op) {
+			case '+':
+				cout << a << op << b << "=" << a+b;
+				break;
+			case '-':
+				cout << a << op << b << "=" << a-b;
+				break;
+			case '*':
+				cout << a << op << b << "=" << a*b;
+				break;
+			case '/':
+				cout << a << op << b << "=" << a/b;
+				break;
+			case 'Q':
+			case 'q':
+				hello();
+				break;
+			default:
+				cout << "Illegal operator !";
+				break;
+		}
+		cout << "\n\n";
+		cin >> a >> op >> b;
+	}
+	hello();
+}
+void special() {
+	cin >> functionSSS >> c;
+	while(functionSSS != 'Q' && functionSSS != 'q') {
+		cout << "\n\n";
+		switch(functionSSS) {
+			case 's':
+				cout << "abs ( " << c << " ) = " << abs(c);
+				break;
+			case 't':
+				cout << "sqrt ( " << c << " ) = " << sqrt(c);
+				break;
+			case 'u':
+				cout << "sqaure ( " << c << " ) = " << c*c;
+				break;
+			case 'e':
+				cout << "cube ( " << c << " ) = " << c*c*c;
+				break;
+			case 'Q':
+			case 'q':
+				hello();
+				break;
+			default:
+				cout << "Illegal functionSSS !";
+				break;
+		}
+		cout << "\n\n";
+		cin >> functionSSS >> c;
+	}
+	hello();
+}
